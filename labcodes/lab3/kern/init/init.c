@@ -19,10 +19,12 @@ static void lab1_switch_test(void);
 
 int
 kern_init(void) {
-    extern char edata[], ebss[];
-    memset(edata, 0, ebss - edata);
+    // extern char edata[], ebss[];
+    // memset(edata, 0, ebss - edata);
 
-    cons_init();                // init the console
+    // cprintf("size = 0x%x\n", ebss - edata);
+
+    // cons_init();                // init the console
 
     const char *message = "(THU.CST) os is loading ...";
     cprintf("%s\n\n", message);
@@ -33,7 +35,7 @@ kern_init(void) {
 
     pmm_init();                 // init physical memory management
 
-    pic_init();                 // init interrupt controller
+    // pic_init();                 // init interrupt controller
     idt_init();                 // init interrupt descriptor table
 
     vmm_init();                 // init virtual memory management

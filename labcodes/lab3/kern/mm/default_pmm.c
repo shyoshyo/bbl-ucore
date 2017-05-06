@@ -2,6 +2,7 @@
 #include <list.h>
 #include <string.h>
 #include <default_pmm.h>
+#include <sbi.h>
 
 /* In the first fit algorithm, the allocator keeps a list of free blocks (known as the free list) and,
    on receiving a request for memory, scans along the list for the first block that is large enough to
@@ -188,10 +189,18 @@ basic_check(void) {
 
     assert(p0 != p1 && p0 != p2 && p1 != p2);
     assert(page_ref(p0) == 0 && page_ref(p1) == 0 && page_ref(p2) == 0);
+    
+    memory_block_info info;
+    uint32_t hart_id = sbi_hart_id();
+    if (sbi_query_memory(hart_id, &info) != 0) {
+        panic("failed to get physical memory size info!\n");
+    }
+    
 
-    assert(page2pa(p0) < npage * PGSIZE);
-    assert(page2pa(p1) < npage * PGSIZE);
-    assert(page2pa(p2) < npage * PGSIZE);
+    uint32_t mem_begin = info.base;
+    assert(page2pa(p0) - mem_begin < npage * PGSIZE);
+    assert(page2pa(p1) - mem_begin < npage * PGSIZE);
+    assert(page2pa(p2) - mem_begin < npage * PGSIZE);
 
     list_entry_t free_list_store = free_list;
     list_init(&free_list);
