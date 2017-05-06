@@ -54,7 +54,7 @@
 
 /* All physical memory mapped at this address */
 #define KERNBASE            0xC0000000
-#define KMEMSIZE            0x38000000                  // the maximum amount of physical memory
+#define KMEMSIZE            0x01000000                  // the maximum amount of physical memory
 #define KERNTOP             (KERNBASE + KMEMSIZE)
 
 /* *
@@ -130,3 +130,4 @@ typedef struct {
 #endif /* !__ASSEMBLER__ */
 
 #endif /* !__KERN_MM_MEMLAYOUT_H__ */
+

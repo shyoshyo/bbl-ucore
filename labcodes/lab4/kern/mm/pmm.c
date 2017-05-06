@@ -229,14 +229,18 @@ page_init(void) {
 
     extern char end[];
 
-    npage = maxpa / PGSIZE;
+    offset_PPN = ROUNDUP(mem_begin, PGSIZE)/PGSIZE;
+    npage = (maxpa) / PGSIZE - offset_PPN;
     // BBL has put the initial page table at the first available page after the kernel
     // so stay away from it by adding extra offset to end
     pages = (struct Page *)ROUNDUP((void *)end, PGSIZE);
 
     for (size_t i = 0; i < npage; i ++) {
+        if((i & 0xff) == 0x0)
+            cprintf("page init: %x / %x\r", i, npage);
         SetPageReserved(pages + i);
     }
+    cprintf("page init: OK        \n");
 
     uintptr_t freemem = PADDR((uintptr_t)pages + sizeof(struct Page) * npage);
 
@@ -266,10 +270,13 @@ boot_map_segment(pde_t *pgdir, uintptr_t la, size_t size, uintptr_t pa, uint32_t
     la = ROUNDDOWN(la, PGSIZE);
     pa = ROUNDDOWN(pa, PGSIZE);
     for (; n > 0; n --, la += PGSIZE, pa += PGSIZE) {
+        if((n & 0xff) == 0x0) 
+            cprintf("boot_map_segment: %x / 0 \r", n);
         pte_t *ptep = get_pte(pgdir, la, 1);
         assert(ptep != NULL);
         *ptep = pte_create(pa >> PGSHIFT, PTE_V | perm);
     }
+    cprintf("boot_map_segment: OK          \n");
 }
 
 //boot_alloc_page - allocate one page using pmm->alloc_pages(1) 
