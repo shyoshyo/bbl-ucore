@@ -7,7 +7,7 @@ V       := @
 
 # try to infer the correct GCCPREFX
 ifndef GCCPREFIX
-GCCPREFIX := riscv32-unknown-linux-gnu-
+GCCPREFIX := riscv32-unknown-elf-
 endif
 
 # try to infer the correct QEMU
@@ -204,7 +204,7 @@ $(call create_target,kernel)
 UCOREIMG	:= $(call totarget,ucore.img)
 
 $(UCOREIMG): $(kernel)
-	cd ../../riscv-pk && rm -rf build && mkdir build && cd build && ../configure --prefix=$(RISCV) --host=riscv32-unknown-linux-gnu --with-payload=../../labcodes/$(PROJ)/$(kernel) && make && cp bbl ../../labcodes/$(PROJ)/$(UCOREIMG)
+	cd ../../riscv-pk && rm -rf build && mkdir build && cd build && ../configure --prefix=$(RISCV) --host=riscv32-unknown-elf --with-payload=../../labcodes/$(PROJ)/$(kernel) && make && cp bbl ../../labcodes/$(PROJ)/$(UCOREIMG)
 
 $(call create_target,ucore.img)
 

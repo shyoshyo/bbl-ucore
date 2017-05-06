@@ -49,6 +49,8 @@ int copy_range(pde_t *to, pde_t *from, uintptr_t start, uintptr_t end, bool shar
 
 void print_pgdir(void);
 
+uint32_t offset_PPN;
+
 /* *
  * PADDR - takes a kernel virtual address (an address that points above KERNBASE),
  * where the machine's maximum 256MB of physical memory is mapped and returns the
@@ -71,7 +73,7 @@ void print_pgdir(void);
     ({                                                           \
         uintptr_t __m_pa = (pa);                                 \
         size_t __m_ppn = PPN(__m_pa);                            \
-        if (__m_ppn >= npage) {                                  \
+        if (__m_ppn - offset_PPN >= npage) {                                  \
             panic("KADDR called with invalid pa %08lx", __m_pa); \
         }                                                        \
         (void *)(__m_pa + va_pa_offset);                         \
@@ -83,20 +85,22 @@ extern uint32_t va_pa_offset;
 
 static inline ppn_t
 page2ppn(struct Page *page) {
-    return page - pages;
+    return page - pages + offset_PPN;
 }
 
 static inline uintptr_t
 page2pa(struct Page *page) {
-    return page2ppn(page) << PGSHIFT;
+    return ((page2ppn(page)) << PGSHIFT);
 }
 
 static inline struct Page *
 pa2page(uintptr_t pa) {
-    if (PPN(pa) >= npage) {
+    pa = PPN(pa) - offset_PPN;
+
+    if (pa >= npage) {
         panic("pa2page called with invalid pa");
     }
-    return &pages[PPN(pa)];
+    return &pages[pa];
 }
 
 static inline void *
