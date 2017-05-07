@@ -248,12 +248,14 @@ static void *__kmalloc(size_t size, gfp_t gfp)
 void *
 kmalloc(size_t size)
 {
-  return __kmalloc(size, 0);
+  return page2kva(alloc_pages((ROUNDUP(size, PAGE_SIZE)) / PAGE_SIZE));
+  //return __kmalloc(size, 0);
 }
 
 
 void kfree(void *block)
 {
+	return;
 	bigblock_t *bb, **last = &bigblocks;
 	unsigned long flags;
 

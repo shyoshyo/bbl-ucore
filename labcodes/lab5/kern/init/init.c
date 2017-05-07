@@ -23,7 +23,7 @@ kern_init(void) {
     extern char edata[], ebss[];
     // clean up the bss section will zero static variables in vmalloc
     // memset(edata, 0, ebss - edata);
-    cons_init();                // init the console
+    //cons_init();                // init the console
 
     const char *message = "(THU.CST) os is loading ...";
     cprintf("%s\n\n", message);
