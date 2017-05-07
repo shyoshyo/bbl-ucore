@@ -233,7 +233,12 @@ page_init(void) {
     npage = (maxpa) / PGSIZE - offset_PPN;
     // BBL has put the initial page table at the first available page after the kernel
     // so stay away from it by adding extra offset to end
-    pages = (struct Page *)ROUNDUP((void *)end, PGSIZE);
+    pages = (struct Page *)((ROUNDUP((void *)end, PGSIZE)) + PGSIZE + PGSIZE);
+    
+    cprintf("ptbr = %x (phy)\n", (((read_csr(sptbr)) & 0xFFFFF) << 12));
+    cprintf("pages = %x (phy)\n", PADDR(pages));
+    assert((((read_csr(sptbr)) & 0xFFFFF) << 12) < PADDR(pages));
+
 
     for (size_t i = 0; i < npage; i ++) {
         if((i & 0xff) == 0x0)
